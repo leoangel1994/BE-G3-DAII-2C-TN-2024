@@ -1,0 +1,197 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "The AWS CloudFormation template for this Serverless application",
+  "Resources": {
+    "ServerlessDeploymentBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "ServerlessDeploymentBucketPolicy": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "ServerlessDeploymentBucket"
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:*",
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::",
+                      {
+                        "Ref": "ServerlessDeploymentBucket"
+                      },
+                      "/*"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::",
+                      {
+                        "Ref": "ServerlessDeploymentBucket"
+                      }
+                    ]
+                  ]
+                }
+              ],
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": false
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "TestHandlerLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/eventify-eda-be-dev-testHandler"
+      }
+    },
+    "TestHandlerLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/eventify-eda-be/dev/1725894423487-2024-09-09T15:07:03.487Z/eventify-eda-be.zip"
+        },
+        "Handler": "handler.lambda_handler",
+        "Runtime": "python3.10",
+        "FunctionName": "eventify-eda-be-dev-testHandler",
+        "MemorySize": 1024,
+        "Timeout": 6,
+        "Role": "arn:aws:iam::747661705570:role/LabRole"
+      },
+      "DependsOn": [
+        "TestHandlerLogGroup"
+      ]
+    },
+    "TestHandlerLambdaVersionIcrkZNTUP2fAu8ZgYZJIXlg58jJvW40ly1NFwOlNII": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "TestHandlerLambdaFunction"
+        },
+        "CodeSha256": "0U+0nLRQzJAKRqw0ecKC+fLcAZZZqOaa5+a0m7C3F8I="
+      }
+    },
+    "EventifyedabedevtestHandlerrule1EventBridgeRule": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "EventPattern": {
+          "source": [
+            "my.application"
+          ],
+          "detail-type": [
+            "test"
+          ]
+        },
+        "Name": "eventify-eda-be-dev-testHandler-rule-1",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "TestHandlerLambdaFunction",
+                "Arn"
+              ]
+            },
+            "Id": "eventify-eda-be-dev-testHandler-rule-1-target"
+          }
+        ]
+      }
+    },
+    "TestHandlerEventBridgeLambdaPermission1": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "TestHandlerLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            ":",
+            [
+              "arn",
+              {
+                "Ref": "AWS::Partition"
+              },
+              "events",
+              {
+                "Ref": "AWS::Region"
+              },
+              {
+                "Ref": "AWS::AccountId"
+              },
+              {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "rule",
+                    "default",
+                    "eventify-eda-be-dev-testHandler-rule-1"
+                  ]
+                ]
+              }
+            ]
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "ServerlessDeploymentBucketName": {
+      "Value": {
+        "Ref": "ServerlessDeploymentBucket"
+      },
+      "Export": {
+        "Name": "sls-eventify-eda-be-dev-ServerlessDeploymentBucketName"
+      }
+    },
+    "TestHandlerLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "TestHandlerLambdaVersionIcrkZNTUP2fAu8ZgYZJIXlg58jJvW40ly1NFwOlNII"
+      },
+      "Export": {
+        "Name": "sls-eventify-eda-be-dev-TestHandlerLambdaFunctionQualifiedArn"
+      }
+    }
+  }
+}
