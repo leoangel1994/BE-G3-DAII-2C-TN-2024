@@ -1,0 +1,29 @@
+service: eventify-eda-be
+
+provider:
+  name: aws
+  runtime: python3.10
+  region: us-east-1
+  profile: aws-academy
+  role: arn:aws:iam::747661705570:role/LabRole
+
+functions:
+  testHandler:
+    handler: handler.lambda_handler
+    events:
+      - eventBridge:
+          eventBus: default
+          pattern:
+            source:
+              - my.application
+            detail-type:
+              - test
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux
+    useDownloadCache: true
+    useStaticCache: true
