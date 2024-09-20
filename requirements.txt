@@ -1,1 +1,3 @@
-marshmallow==3.22.0
+marshmallow
+fastapi
+mangum

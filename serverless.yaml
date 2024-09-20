@@ -1,3 +1,5 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: edabackenddaii
 service: eventify-eda-be
 
 provider:
@@ -6,6 +8,11 @@ provider:
   region: us-east-1
   profile: aws-academy
   role: arn:aws:iam::747661705570:role/LabRole
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - "execute-api:ManageConnections"
+      Resource: "arn:aws:execute-api:us-east-1:*:*/*/*/@connections/*"
 
 functions:
   testHandler:
@@ -18,6 +25,34 @@ functions:
               - my.application
             detail-type:
               - test
+
+  websocketConnect:
+    handler: api.websocket.connect
+    events:
+      - websocket:
+          route: $connect
+
+  websocketDisconnect:
+    handler: api.websocket.disconnect
+    events:
+      - websocket:
+          route: $disconnect
+
+  websocketDefault:
+    handler: api.websocket.default
+    events:
+      - websocket:
+          route: $default
+
+  restApi:
+    handler: api.app.handler
+    events:
+      - http:
+          path: /
+          method: get
+      - http:
+          path: /{proxy+}
+          method: any
 
 plugins:
   - serverless-python-requirements
