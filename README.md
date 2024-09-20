@@ -6,9 +6,10 @@
 - Python 3.10+
 
 # Dependencias
-- Serverless 
+- Serverless
+- Sandbox API Key, API Secret, API Access Token set.
 
-npm install -g serverless && npm install -g serverless-python-requirements
+Run: npm install -g serverless && npm install -g serverless-python-requirements
 
 # Ejecutar
 serverless deploy --debug
