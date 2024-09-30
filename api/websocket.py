@@ -2,10 +2,20 @@
 import json
 import boto3
 
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table('ConnectionsTable')
+
 def connect(event, context):
 
     connection_id = event['requestContext']['connectionId']
     print(f"Conectado client id: {connection_id}")
+
+    # Guardar el ConnectionId en DynamoDB
+    table.put_item(
+        Item={
+            'connectionId': connection_id
+        }
+    )
 
     return {
         'statusCode': 200,
@@ -16,6 +26,13 @@ def disconnect(event, context):
 
     connection_id = event['requestContext']['connectionId']
     print(f"Desconectado client id: {connection_id}")
+
+    # Eliminar el ConnectionId de DynamoDB cuando el cliente se desconecta
+    table.delete_item(
+        Key={
+            'connectionId': connection_id
+        }
+    )
  
     return {
         'statusCode': 200,
@@ -31,12 +48,12 @@ def default(event, context):
 
         print(f'Mensaje recibido de cliente id ({connection_id}): {message}')
 
-        apig_management_client = boto3.client('apigatewaymanagementapi',
+        ws_client = boto3.client('apigatewaymanagementapi',
             endpoint_url=f"https://{event['requestContext']['domainName']}/{event['requestContext']['stage']}"
         )
 
         # enviar respuesta al cliente WebSocket
-        apig_management_client.post_to_connection(
+        ws_client.post_to_connection(
             ConnectionId=connection_id,
             Data=json.dumps({
                 'message': f"Se recibio el mensaje {message}",

@@ -2,14 +2,32 @@
 
 
 # Requerimientos
+- Docker
+- Serverless
 - Node JS y NPM (v21.1.0+)
 - Python 3.10+
 
-# Dependencias
-- Serverless
-- Sandbox API Key, API Secret, API Access Token set.
+- Modificar numero de cuenta de sandbox en serverless.yaml: 
+![alt text](.doc/image.png)
 
-Run: npm install -g serverless && npm install -g serverless-python-requirements
+Instalar: 
+npm install -g serverless
+npm install -g serverless-python-requirements
+npm install -g serverless-scriptable-plugin
+
+
+# Configurar CLI
+Se necesita actualizar el Sandbox API Key, API Secret, API Access Token set. Crear un perfil "aws-academy" en .aws/config:
+[profile aws-academy]
+region = us-east-1
+output = json
+
+Copiar credenciales del sandbox y pegar en .aws/credentials:
+[aws-academy]
+aws_access_key_id=ASIA24FA4IFROT4LWUOH
+aws_secret_access_key=dGwxWWFVgESV*******zT2M5ZJDuhxLo6vq9
+aws_session_token=IQoJb3JpZ2lL8JN/li/G0zC0uZ*******361zZ2XuQjJtdKxzXJtYFTW02M+izA==
+
 
 # Ejecutar
-serverless deploy --debug
+serverless deploy
