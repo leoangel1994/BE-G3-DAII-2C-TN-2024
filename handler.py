@@ -1,5 +1,7 @@
 import json
 import boto3
+from datetime import datetime
+import uuid
 
 ssm = boto3.client('ssm')
 
@@ -9,6 +11,7 @@ def get_websocket_url():
 
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table('ConnectionsTable')
+history_table = dynamodb.Table('EventsHistory')
 
 def lambda_handler(event, context):
     
@@ -28,8 +31,18 @@ def lambda_handler(event, context):
         if 'detail' not in event:
             raise KeyError("no se recibio detail en el evento")
         
-        # Validar esquema
+        #TODO  Validar esquema
         detail = event['detail']
+        
+        # Guardar evento en DynamoDB como historial
+        event_id = str(uuid.uuid4())
+        history_table.put_item(
+            Item={
+                'eventId': event_id,
+                'timestamp': datetime.utcnow().isoformat(),
+                'detail': detail
+            }
+        )
 
         # Obtener los ConnectionIds almacenados en DynamoDB
         response = table.scan()
