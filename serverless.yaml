@@ -31,9 +31,18 @@ provider:
       Resource:
         - arn:aws:events:us-east-1:747661705570:event-bus/default
 
+package:
+  patterns:
+    - '!**'
+    - api/app.py
+    - api/websocket.py
+    - handler.py
+
 functions:
   testHandler:
     handler: handler.lambda_handler
+    package:
+      individually: true
     events:
       - eventBridge:
           eventBus: default
@@ -61,6 +70,8 @@ functions:
 
   restApi:
     handler: api.app.handler
+    package:
+      individually: true
     events:
       - http:
           path: /

@@ -1,3 +1,4 @@
 node_modules/
 cdk-test/
 .serverless/
+outfile.txt

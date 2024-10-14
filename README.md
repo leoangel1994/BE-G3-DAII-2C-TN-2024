@@ -2,8 +2,8 @@
 
 
 # Requerimientos
-- Docker
-- Serverless
+- Docker (https://www.docker.com/)
+- Serverless (https://serverless.com/ -> Registrarse / Crear Cuenta)
 - Node JS y NPM (v21.1.0+)
 - Python 3.10+
 
@@ -11,9 +11,9 @@
 ![alt text](.doc/image.png)
 
 Instalar: 
-npm install -g serverless
-npm install -g serverless-python-requirements
-npm install -g serverless-scriptable-plugin
+npm install serverless
+npm install serverless-python-requirements
+npm install serverless-scriptable-plugin
 
 
 # Configurar CLI

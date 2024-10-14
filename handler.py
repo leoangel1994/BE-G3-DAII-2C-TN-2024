@@ -1,22 +1,11 @@
 import json
 import boto3
-from marshmallow import Schema, fields, ValidationError
 
 ssm = boto3.client('ssm')
 
 def get_websocket_url():
     response = ssm.get_parameter(Name='/eventify-eda-be/websocket-url', WithDecryption=True)
     return response['Parameter']['Value']
-
-# validar campos con marshmellow
-class TestSchema(Schema):
-    operacion = fields.Str(required=True)
-    artista = fields.Str(required=True)
-    lugar = fields.Str(required=True)
-    estadio = fields.Str(required=True)
-    fecha_presentacion = fields.Date(required=True)
-    fecha_creacion = fields.Date(required=True)
-    fecha_actualizacion = fields.Date(required=True)
 
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table('ConnectionsTable')
@@ -41,8 +30,6 @@ def lambda_handler(event, context):
         
         # Validar esquema
         detail = event['detail']
-        schema = TestSchema()
-        validated_data = schema.load(detail)
 
         # Obtener los ConnectionIds almacenados en DynamoDB
         response = table.scan()
