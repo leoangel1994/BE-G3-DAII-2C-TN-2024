@@ -12,7 +12,11 @@
 Instalar:
 ```bash 
 npm install serverless
+```
+```bash 
 npm install serverless-python-requirements
+```
+```bash 
 npm install serverless-scriptable-plugin
 ```
 
