@@ -14,9 +14,18 @@ provider:
         - "execute-api:ManageConnections"
       Resource: "arn:aws:execute-api:us-east-1:*:*/*/*/@connections/*"
 
+package:
+  patterns:
+    - '!**'
+    - api/app.py
+    - api/websocket.py
+    - handler.py
+
 functions:
   testHandler:
     handler: handler.lambda_handler
+    package:
+      individually: true
     events:
       - eventBridge:
           eventBus: default
@@ -46,13 +55,12 @@ functions:
 
   restApi:
     handler: api.app.handler
+    package:
+      individually: true
     events:
       - http:
           path: /
           method: get
-      - http:
-          path: /{proxy+}
-          method: any
 
 plugins:
   - serverless-python-requirements

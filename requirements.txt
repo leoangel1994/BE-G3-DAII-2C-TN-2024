@@ -1,3 +1,2 @@
-marshmallow
 fastapi
 mangum
