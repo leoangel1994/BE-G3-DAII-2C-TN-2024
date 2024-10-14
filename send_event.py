@@ -1,5 +1,6 @@
 import boto3
 import json
+from datetime import date
 
 client = boto3.client('events')
 
@@ -15,13 +16,22 @@ def send_test_event():
     response = client.put_events(
         Entries=[
             {
-                'Source': 'my.application',
+                'Source': 'myapp',
                 'DetailType': 'test',
-                'Detail': json.dumps({'test_id': '123456', 'status': 'init'}),
+                'Detail': json.dumps({
+                    "operacion": "venta",
+                    "artista": "Monolink",
+                    "lugar": "Platea A",
+                    "estadio": "Monumental",
+                    "fecha_presentacion": "2024-09-29",
+                    "fecha_creacion": "2024-09-29",
+                    "fecha_actualizacion": "2024-09-29"
+                }),
                 'EventBusName': 'default'
-            },
+            }
         ]
     )
+
     print(f"Evento enviado: {response}")
 
 if __name__ == "__main__":
