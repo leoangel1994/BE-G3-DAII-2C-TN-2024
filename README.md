@@ -1,6 +1,5 @@
 # IntApp-EDA
 
-
 # Requerimientos
 - Docker (https://www.docker.com/)
 - Serverless (https://serverless.com/ -> Registrarse / Crear Cuenta)
@@ -14,7 +13,6 @@ Instalar:
 npm install serverless
 npm install serverless-python-requirements
 npm install serverless-scriptable-plugin
-
 
 # Configurar CLI
 Se necesita actualizar el Sandbox API Key, API Secret, API Access Token set. Crear un perfil "aws-academy" en .aws/config:

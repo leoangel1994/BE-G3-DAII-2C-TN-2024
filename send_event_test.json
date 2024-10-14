@@ -1,0 +1,11 @@
+{
+    "detail": {
+        "operacion": "venta",
+        "artista": "Monolink",
+        "lugar": "Platea A",
+        "estadio": "Monumental",
+        "fecha_presentacion": "2024-09-29",
+        "fecha_creacion": "2024-09-29",
+        "fecha_actualizacion": "2024-09-29"
+    }
+}
