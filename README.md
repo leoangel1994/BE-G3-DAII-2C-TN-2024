@@ -6,7 +6,7 @@
 - Node JS y NPM (v21.1.0+)
 - Python 3.10+
 
-- Modificar numero de cuenta de sandbox en serverless.yaml: 
+- Modificar numero de cuenta de sandbox en serverless.yaml, actualizar todos los lugares donde diga "637423304975" por el numero de tu cuenta de AWS del sandbox: 
 ![alt text](.doc/image.png)
 
 Instalar: 

@@ -16,6 +16,7 @@ def send_test_event():
     response = client.put_events(
         Entries=[
             {
+                'EventBusName': 'arn:aws:events:us-east-1:637423304975:event-bus/default',
                 'Source': 'myapp',
                 'DetailType': 'test',
                 'Detail': json.dumps({
@@ -27,7 +28,6 @@ def send_test_event():
                     "fecha_creacion": "2024-09-29",
                     "fecha_actualizacion": "2024-09-29"
                 }),
-                'EventBusName': 'default'
             }
         ]
     )
