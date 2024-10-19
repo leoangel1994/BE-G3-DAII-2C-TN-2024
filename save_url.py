@@ -30,7 +30,7 @@ def lambda_handler(event, context):
             ssm_client.put_parameter(
                 Name=parameter_name,
                 Value=websocket_url,
-                Type='String',  # Puedes usar 'SecureString' si quieres cifrarlo
+                Type='String',  #  'SecureString' para cifrar
                 Overwrite=True
             )
 

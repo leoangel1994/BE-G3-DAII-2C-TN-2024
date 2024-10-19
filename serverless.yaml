@@ -80,11 +80,23 @@ functions:
     #      - 'requirements.txt'
     events:
       - http:
-          path: /
+          path: /v1/events/history
           method: get
+          cors:
+            origins:
+              - "*"
+            headers:
+              - "*"
+            allowCredentials: true
       - http:
-          path: /v1/history
+          path: /v1/operations/types
           method: get
+          cors:
+            origins:
+              - "*"
+            headers:
+              - "*"
+            allowCredentials: true
 
   saveWebsocketUrl:
     handler: save_url.lambda_handler
