@@ -34,7 +34,7 @@ def lambda_handler(event, context):
         #TODO  Validar esquema
         detail = event['detail']
         
-        operacion = detail.get('operacion', 'desconocida')
+        operation = detail.get('operation', 'desconocida')
         
         # Guardar evento en DynamoDB como historial
         event_id = str(uuid.uuid4())
@@ -42,7 +42,7 @@ def lambda_handler(event, context):
             Item={
                 'eventId': event_id,
                 'timestamp': datetime.utcnow().isoformat(),
-                'operacion': operacion,
+                'operation': operation,
                 'detail': detail
             }
         )

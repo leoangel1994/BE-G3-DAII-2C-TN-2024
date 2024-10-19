@@ -20,7 +20,7 @@ def send_test_event():
                 'Source': 'myapp',
                 'DetailType': 'test',
                 'Detail': json.dumps({
-                    "operacion": "venta",
+                    "operation": "venta",
                     "artista": "Monolink",
                     "lugar": "Platea A",
                     "estadio": "Monumental",

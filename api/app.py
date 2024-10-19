@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-from boto3.dynamodb.conditions import Key
+from boto3.dynamodb.conditions import Key, Attr
 from datetime import datetime
 from mangum import Mangum
 from typing import Optional
@@ -23,6 +23,7 @@ history_table = dynamodb.Table('EventsHistory')
 
 @app.get("/v1/events/history")
 def get_event_history(
+    operation: Optional[str] = Query(None, description="Filtrar eventos por operación (ej: venta, reventa)"),
     sort_by: Optional[str] = Query(None, description="Campo por el que ordenar los eventos (ej: timestamp)"),
     sort_order: Optional[str] = Query("asc", description="Orden de los eventos (asc o desc)"),
     start_date: Optional[str] = Query(None, description="Fecha de inicio en formato YYYY-MM-DD"),
@@ -31,6 +32,10 @@ def get_event_history(
     try:
         # Filtrar por fechas si se proveen
         filter_expression = None
+        
+        # Filtrar por operación si se proporciona
+        if operation:
+            filter_expression = Attr('operation').eq(operation)
 
         if start_date or end_date:
             date_format = "%Y-%m-%d"
