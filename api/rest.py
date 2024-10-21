@@ -18,9 +18,9 @@ app.add_middleware(
     allow_headers=["*"],  # Permitir todos los encabezados
 )
 
-# Inicializar el cliente DynamoDB
-dynamodb = boto3.resource('dynamodb')
-history_table = dynamodb.Table('EventsHistory')
+def get_dynamodb_table():
+    dynamodb = boto3.resource('dynamodb')
+    return dynamodb.Table('EventsHistory')
 
 @app.get("/v1/events/history")
 def get_event_history(
@@ -56,7 +56,9 @@ def get_event_history(
                         filter_expression = Key('timestamp').lte(end_datetime.isoformat())
                 except ValueError:
                     raise HTTPException(status_code=400, detail="Formato de fecha inválido para end_date")
-
+                
+        history_table = get_dynamodb_table()
+        
         # Escanear la tabla de eventos con filtro de fechas si existe
         if filter_expression:
             response = history_table.scan(
