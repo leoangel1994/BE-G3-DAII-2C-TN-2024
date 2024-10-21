@@ -71,7 +71,7 @@ functions:
           route: $default
 
   restApi:
-    handler: api.app.handler
+    handler: api.rest.handler
     #package:
     #  individually: true
     #  patterns:

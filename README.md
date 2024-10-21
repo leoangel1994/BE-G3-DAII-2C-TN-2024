@@ -3,7 +3,7 @@ El modulo del EDA es la capa de transporte de Eventify, provee los canales neces
 
 # Compile & Build
 Este repositorio esta integrado y deployado continuamente utilizando Github Actions
-[![GitHub Actions](https://github.com/glacuesta-sa/BE-G3-DAII-2C-TN-2024/actions/workflows/main.yml/badge.svg?branch=develop)](https://github.com/glacuesta-sa/BE-G3-DAII-2C-TN-2024/actions/workflows/main.yml)
+[![GitHub Actions](https://github.com/glacuesta-sa/BE-G3-DAII-2C-TN-2024/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/glacuesta-sa/BE-G3-DAII-2C-TN-2024/actions/workflows/main.yml)
 
 Utilizamos Serverless Framework para automatizar el deployent al sandbox de AWS utilizando Cloudformation. A continuación se detallan los requerimientos necesitarios para deployar este modulo.
 
