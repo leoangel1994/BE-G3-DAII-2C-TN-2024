@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from boto3.dynamodb.conditions import Key, Attr
 from datetime import datetime
 from mangum import Mangum
@@ -71,7 +72,14 @@ def get_event_history(
             reverse_order = True if sort_order == "desc" else False
             items = sorted(items, key=lambda x: x.get(sort_by, ""), reverse=reverse_order)
 
-        return {"ok": True, "message": "success", "data": {"events": items}}
+        return JSONResponse(
+            content={"ok": True, "message": "success", "data": {"events": items}},
+            headers={
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "*"
+            }
+        )
     
     except Exception as e:
         print(f"Error al obtener el historico de eventos: {e}")
@@ -79,8 +87,15 @@ def get_event_history(
     
 @app.get("/v1/operations/types")
 def get_operation_types():
-        # TODO: pendiente de definicion de PO   
-        return {"ok": True, "message": "success", "data": {"operation-types": ["venta", "reventa"]}}
+    # TODO: pendiente de definicion de PO
+    return JSONResponse(
+        content={"ok": True, "message": "success", "data": {"operation-types": ["venta", "reventa"]}},
+        headers={
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*", 
+            "Access-Control-Allow-Headers": "*", 
+        }
+    )
 
 # adaptar la rest API a Lambda
 handler = Mangum(app)
