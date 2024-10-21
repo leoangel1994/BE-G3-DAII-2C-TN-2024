@@ -41,14 +41,14 @@ package:
     - '!**'
     - 'api/app.py'
     - 'api/websocket.py'
+    - 'api/events.py'
     - 'requirements.txt'
-    - 'handler.py'
-    - 'save_url.py'
+    - 'utils/save_url.py'
 
 functions:
   testHandler:
     name: TestHandlerLambdaFunction 
-    handler: handler.lambda_handler
+    handler: api.events.lambda_handler
     package:
       individually: true
 
@@ -82,24 +82,14 @@ functions:
       - http:
           path: /v1/events/history
           method: get
-          cors:
-            origins:
-              - "*"
-            headers:
-              - "*"
-            allowCredentials: true
+          cors: true
       - http:
           path: /v1/operations/types
           method: get
-          cors:
-            origins:
-              - "*"
-            headers:
-              - "*"
-            allowCredentials: true
+          cors: true
 
   saveWebsocketUrl:
-    handler: save_url.lambda_handler
+    handler: utils.save_url.lambda_handler
     package:
       individually: true
     timeout: 60
