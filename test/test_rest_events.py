@@ -40,7 +40,7 @@ def test_get_operation_types():
         assert response.json() == {
             "ok": True,
             "message": "success",
-            "data": {"operation-types": ["venta", "reventa"]}
+            "data": {"operationTypes": ["venta", "reventa"]}
     }
 
 def test_get_event_history_no_params(setup_dynamodb):

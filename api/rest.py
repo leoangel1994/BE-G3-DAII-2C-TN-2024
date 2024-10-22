@@ -7,6 +7,9 @@ from mangum import Mangum
 from typing import Optional
 import boto3
 
+from fastapi.openapi.utils import get_openapi
+from fastapi.openapi.docs import get_swagger_ui_html
+
 app = FastAPI()
 
 # TODO security: mejorar politicas de CORS
@@ -91,13 +94,38 @@ def get_event_history(
 def get_operation_types():
     # TODO: pendiente de definicion de PO
     return JSONResponse(
-        content={"ok": True, "message": "success", "data": {"operation-types": ["venta", "reventa"]}},
+        content={"ok": True, "message": "success", "data": {"operationTypes": ["venta", "reventa"]}},
         headers={
             "Content-Type": "application/json",
             "Access-Control-Allow-Origin": "*", 
             "Access-Control-Allow-Headers": "*", 
         }
     )
+    
+# Docs
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+    openapi_schema = get_openapi(
+        title="Eventify - EDA API Rest",
+        version="1.0.0",
+        description="EDA API REST",
+        routes=app.routes,
+    )
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+@app.get("/openapi.json", include_in_schema=False)
+def get_open_api_endpoint():
+    return custom_openapi()
+
+@app.get("/docs", include_in_schema=False)
+async def custom_swagger_ui_html():
+    return get_swagger_ui_html(
+        openapi_url="/dev/openapi.json",
+        title="Swagger UI",
+    )
+
 
 # adaptar la rest API a Lambda
 handler = Mangum(app)
