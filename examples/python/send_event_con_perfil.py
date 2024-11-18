@@ -18,7 +18,7 @@ def send_test_event():
             {
                 'EventBusName': 'arn:aws:events:us-east-1:442042507897:event-bus/default', # obligatorio
                 'Source': 'artist-module', # obligatorio
-                'DetailType': 'recital.creation', # obligatorio
+                'DetailType': 'recital', # obligatorio
                 'Detail': json.dumps({
                     "operation": "creation",
                     "artista": "Monolink",
