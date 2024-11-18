@@ -5,7 +5,7 @@ from datetime import date
 client = boto3.client('events')
 
 session = boto3.Session(
-    profile_name='aws-academy',
+    profile_name='aws-academy', ## existe un perfil llamado aws-academy con las credenciales en ~/.aws/credentials
     region_name='us-east-1' 
 )
 
@@ -16,11 +16,11 @@ def send_test_event():
     response = client.put_events(
         Entries=[
             {
-                'EventBusName': 'arn:aws:events:us-east-1:637423304975:event-bus/default',
-                'Source': 'myapp',
-                'DetailType': 'test',
+                'EventBusName': 'arn:aws:events:us-east-1:442042507897:event-bus/default', # obligatorio
+                'Source': 'artist-module', # obligatorio
+                'DetailType': 'recital', # obligatorio
                 'Detail': json.dumps({
-                    "operation": "venta",
+                    "operation": "creation",
                     "artista": "Monolink",
                     "lugar": "Platea A",
                     "estadio": "Monumental",
