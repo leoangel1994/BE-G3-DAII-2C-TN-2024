@@ -1,26 +1,23 @@
 import boto3
 import json
-from datetime import date
+import os
+
+# Configurar credenciales usando variables de entorno
+os.environ['AWS_ACCESS_KEY_ID'] = 'TU_ACCESS_KEY_ID'
+os.environ['AWS_SECRET_ACCESS_KEY'] = 'TU_ACCESS_KEY_SECRET'
+os.environ['AWS_DEFAULT_REGION'] = 'us-east-1' #obligatorio
 
 client = boto3.client('events')
-
-session = boto3.Session(
-    profile_name='aws-academy',
-    region_name='us-east-1' 
-)
-
-# Initialize EventBridge client
-client = session.client('events')
 
 def send_test_event():
     response = client.put_events(
         Entries=[
             {
-                'EventBusName': 'arn:aws:events:us-east-1:637423304975:event-bus/default',
-                'Source': 'myapp',
-                'DetailType': 'test',
+                'EventBusName': 'arn:aws:events:us-east-1:442042507897:event-bus/default', # obligatorio
+                'Source': 'artist-module', # obligatorio
+                'DetailType': 'recital.creation', # obligatorio
                 'Detail': json.dumps({
-                    "operation": "venta",
+                    "operation": "creation", # obligatorio
                     "artista": "Monolink",
                     "lugar": "Platea A",
                     "estadio": "Monumental",
