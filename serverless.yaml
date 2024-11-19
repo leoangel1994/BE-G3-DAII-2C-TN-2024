@@ -42,11 +42,11 @@ package:
     - 'api/websocket.py'
     - 'api/events.py'
     - 'requirements.txt'
-    - 'utils/save_url.py'
+    #- 'utils/save_url.py'
 
 functions:
-  testHandler:
-    name: TestHandlerLambdaFunction 
+  AllEvents:
+    name: AllEventsLambdaFunction 
     handler: api.events.lambda_handler
     package:
       individually: true
@@ -95,11 +95,11 @@ functions:
           method: get
           cors: true
 
-  saveWebsocketUrl:
-    handler: utils.save_url.lambda_handler
-    package:
-      individually: true
-    timeout: 60
+  # saveWebsocketUrl:
+  #   handler: utils.save_url.lambda_handler
+  #   package:
+  #     individually: true
+  #   timeout: 60
 
 resources:
   Resources:
@@ -263,29 +263,27 @@ resources:
           - IpProtocol: -1
             CidrIp: 0.0.0.0/0
 
-    TestHandlerEventBridgeRule:
+    AllEventsEventBridgeRule:
       Type: AWS::Events::Rule
       Properties:
-        Name: testHandlerEventRule 
+        Name: AllEventsEventRule 
         EventBusName: default
-        EventPattern:
-          source:
-            - myapp
+        EventPattern: {}
         Targets:
           - Arn:
-              Fn::GetAtt: [TestHandlerLambdaFunction, Arn]
-            Id: TestHandlerEventTarget 
+              Fn::GetAtt: [AllEventsLambdaFunction, Arn]
+            Id: AllEventsEventTarget 
 
-    TestHandlerLambdaPermission:
+    AllEventsLambdaPermission:
       Type: AWS::Lambda::Permission
       Properties:
         FunctionName: 
-          Ref: TestHandlerLambdaFunction
+          Ref: AllEventsLambdaFunction
         Action: lambda:InvokeFunction
         Principal: events.amazonaws.com
         SourceArn: 
           Fn::GetAtt: 
-            - TestHandlerEventBridgeRule
+            - AllEventsEventBridgeRule
             - Arn
     
     # Permite a otras cuentas de AWS (sandboxes) enviar eventos a este EDA
@@ -360,5 +358,5 @@ custom:
       securityPolicy: tls_1_2
       apiType: websocket
 
-  scriptHooks:
-    after:deploy:finalize: 'aws lambda invoke --function-name eventify-eda-be-dev-saveWebsocketUrl --log-type Tail outfile.txt'
+  #scriptHooks:
+    #after:deploy:finalize: 'aws lambda invoke --function-name eventify-eda-be-dev-saveWebsocketUrl --log-type Tail outfile.txt'

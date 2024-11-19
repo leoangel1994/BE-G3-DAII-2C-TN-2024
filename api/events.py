@@ -5,9 +5,9 @@ import uuid
 
 ssm = boto3.client('ssm')
 
-def get_websocket_url():
-    response = ssm.get_parameter(Name='/eventify-eda-be/websocket-url', WithDecryption=True)
-    return response['Parameter']['Value']
+#def get_websocket_url():
+#    response = ssm.get_parameter(Name='/eventify-eda-be/websocket-url', WithDecryption=True)
+#    return response['Parameter']['Value']
 
 dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 table = dynamodb.Table('ConnectionsTable')
@@ -18,21 +18,23 @@ def lambda_handler(event, context):
     print(f"Received event: {json.dumps(event)}")
 
     # Obtener la WebSocket URL
-    websocket_url = get_websocket_url()
-    print(f"La WebSocket URL es: {websocket_url}")
+    #websocket_url = get_websocket_url()
+    #print(f"La WebSocket URL es: {websocket_url}")
 
-    url_https = websocket_url.replace("wss://", "https://")
+    #url_https = websocket_url.replace("wss://", "https://")
 
     ws_client = boto3.client('apigatewaymanagementapi',
-            endpoint_url=url_https
+            endpoint_url="https://edaws.deliver.ar/"#url_https
         )
 
     try:
         if 'detail' not in event:
             raise KeyError("no se recibio detail en el evento")
-        
-        #TODO  Validar esquema
+
         detail = event['detail']
+        
+        if 'operation' not in detail:
+            raise KeyError("no se recibio operation en el evento")
         
         operation = detail.get('operation', 'desconocida')
         
