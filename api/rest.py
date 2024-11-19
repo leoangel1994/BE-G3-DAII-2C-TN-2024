@@ -25,6 +25,20 @@ def get_dynamodb_table():
     dynamodb = boto3.resource('dynamodb')
     return dynamodb.Table('EventsHistory')
 
+@app.get("/v1/health", include_in_schema=False)
+def health_check():
+    """
+    Health check endpoint to verify if the service is running.
+    """
+    return JSONResponse(
+        content={"ok": True, "message": "Service is healthy"},
+        headers={
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*", 
+            "Access-Control-Allow-Headers": "*", 
+        }
+    )
+
 @app.get("/v1/events/history")
 def get_event_history(
     operation: Optional[str] = Query(None, description="Filtrar eventos por operación (ej: venta, reventa)"),
