@@ -30,13 +30,18 @@ def lambda_handler(event, context):
     try:
         if 'detail' not in event:
             raise KeyError("no se recibio detail en el evento")
-
+        
         detail = event['detail']
         
         if 'operation' not in detail:
             raise KeyError("no se recibio operation en el evento")
         
-        operation = detail.get('operation', 'desconocida')
+        operation = detail.get('operation', 'unknown')
+        
+        if 'source' not in event:
+            raise KeyError("no se recibio source en el evento")
+        
+        source = event.get('source', 'unknown')
         
         # Guardar evento en DynamoDB como historial
         event_id = str(uuid.uuid4())
@@ -45,6 +50,7 @@ def lambda_handler(event, context):
                 'eventId': event_id,
                 'timestamp': datetime.utcnow().isoformat(),
                 'operation': operation,
+                'source': source,
                 'detail': detail
             }
         )

@@ -28,8 +28,8 @@ def get_dynamodb_table():
 @app.get("/v1/events/history")
 def get_event_history(
     operation: Optional[str] = Query(None, description="Filtrar eventos por operación (ej: venta, reventa)"),
-    sort_by: Optional[str] = Query(None, description="Campo por el que ordenar los eventos (ej: timestamp)"),
-    sort_order: Optional[str] = Query("asc", description="Orden de los eventos (asc o desc)"),
+    sort_by: Optional[str] = Query(default="timestamp", description="Campo por el que ordenar los eventos (ej: timestamp)"),
+    sort_order: Optional[str] = Query(default="desc", description="Orden de los eventos (asc o desc)"),
     start_date: Optional[str] = Query(None, description="Fecha de inicio en formato YYYY-MM-DD"),
     end_date: Optional[str] = Query(None, description="Fecha de fin en formato YYYY-MM-DD")
 ):
