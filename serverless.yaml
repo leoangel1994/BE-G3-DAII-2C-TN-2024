@@ -46,7 +46,7 @@ package:
 
 functions:
   AllEvents:
-    name: AllEventsHandler
+    name: AllEventsLambdaFunction 
     handler: api.events.lambda_handler
     package:
       individually: true
@@ -288,14 +288,14 @@ resources:
             - "ldap-module"
         Targets:
           - Arn:
-              Fn::GetAtt: [AllEventsHandler, Arn]
+              Fn::GetAtt: [AllEventsLambdaFunction, Arn]
             Id: AllEventsEventTarget 
 
     AllEventsLambdaPermission:
       Type: AWS::Lambda::Permission
       Properties:
         FunctionName: 
-          Ref: AllEventsHandler
+          Ref: AllEventsLambdaFunction
         Action: lambda:InvokeFunction
         Principal: events.amazonaws.com
         SourceArn: 
