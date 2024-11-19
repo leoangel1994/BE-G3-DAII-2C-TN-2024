@@ -268,7 +268,9 @@ resources:
       Properties:
         Name: AllEventsEventRule 
         EventBusName: default
-        EventPattern: {}
+        EventPattern:
+          source: 
+            - "*"
         Targets:
           - Arn:
               Fn::GetAtt: [AllEventsLambdaFunction, Arn]
