@@ -45,7 +45,7 @@ package:
     #- 'utils/save_url.py'
 
 functions:
-  AllEventsHandler:
+  AllEvents:
     name: AllEventsHandler
     handler: api.events.lambda_handler
     package:
