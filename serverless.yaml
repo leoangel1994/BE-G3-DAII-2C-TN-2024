@@ -270,7 +270,14 @@ resources:
         EventBusName: default
         EventPattern:
           source: 
+            - ""
             - "*"
+            - "artist-module"
+            - "tickets-module"
+            - "blockchain-module"
+            - "wallet-module"
+            - "analytics-module"
+            - "ldap-module"
         Targets:
           - Arn:
               Fn::GetAtt: [AllEventsLambdaFunction, Arn]
