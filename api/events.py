@@ -43,6 +43,13 @@ def lambda_handler(event, context):
         
         source = event.get('source', 'unknown')
         
+        if 'detail-type' not in event:
+            raise KeyError("no se recibio detail-type en el evento")
+        
+        detail_type = event.get('detail-type', 'unknown')
+        
+        
+        
         # Guardar evento en DynamoDB como historial
         event_id = str(uuid.uuid4())
         item = {
@@ -50,6 +57,7 @@ def lambda_handler(event, context):
                 'timestamp': datetime.utcnow().isoformat(),
                 'operation': operation,
                 'source': source,
+                'detail-type': detail_type,
                 'detail': detail
             }
         history_table.put_item(
