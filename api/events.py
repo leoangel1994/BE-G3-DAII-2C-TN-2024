@@ -48,8 +48,6 @@ def lambda_handler(event, context):
         
         detail_type = event.get('detail-type', 'unknown')
         
-        
-        
         # Guardar evento en DynamoDB como historial
         event_id = str(uuid.uuid4())
         item = {

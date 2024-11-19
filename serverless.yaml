@@ -45,26 +45,35 @@ package:
     #- 'utils/save_url.py'
 
 functions:
-  AllEvents:
-    name: AllEventsLambdaFunction 
+  AllEventsHandler:
+    name: AllEventsHandler
     handler: api.events.lambda_handler
     package:
       individually: true
 
-  websocketConnect:
+  WebsocketConnect:
+    name: WebsocketConnect 
     handler: api.websocket.connect
+    package:
+      individually: true
     events:
       - websocket:
           route: $connect
 
-  websocketDisconnect:
+  WebsocketDisconnect:
+    name: WebsocketDisconnect
     handler: api.websocket.disconnect
+    package:
+      individually: true
     events:
       - websocket:
           route: $disconnect
 
-  websocketDefault:
+  WebsocketDefault:
+    name: WebsocketDefault
     handler: api.websocket.default
+    package:
+      individually: true
     events:
       - websocket:
           route: $default
@@ -279,14 +288,14 @@ resources:
             - "ldap-module"
         Targets:
           - Arn:
-              Fn::GetAtt: [AllEventsLambdaFunction, Arn]
+              Fn::GetAtt: [AllEventsHandler, Arn]
             Id: AllEventsEventTarget 
 
     AllEventsLambdaPermission:
       Type: AWS::Lambda::Permission
       Properties:
         FunctionName: 
-          Ref: AllEventsLambdaFunction
+          Ref: AllEventsHandler
         Action: lambda:InvokeFunction
         Principal: events.amazonaws.com
         SourceArn: 
