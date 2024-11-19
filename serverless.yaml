@@ -273,7 +273,7 @@ resources:
             - "*"
             - "artist-module"
             - "tickets-module"
-            - "blockchain-module
+            - "blockchain-module"
             - "wallet-module"
             - "analytics-module"
             - "ldap-module"
