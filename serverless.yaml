@@ -103,6 +103,10 @@ functions:
           path: /openapi.json
           method: get
           cors: true
+      - http:
+          path: /v1/health
+          method: get
+          cors: true
 
   # saveWebsocketUrl:
   #   handler: utils.save_url.lambda_handler
