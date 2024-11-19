@@ -45,14 +45,15 @@ def lambda_handler(event, context):
         
         # Guardar evento en DynamoDB como historial
         event_id = str(uuid.uuid4())
-        history_table.put_item(
-            Item={
+        item = {
                 'eventId': event_id,
                 'timestamp': datetime.utcnow().isoformat(),
                 'operation': operation,
                 'source': source,
                 'detail': detail
             }
+        history_table.put_item(
+            Item=item
         )
 
         # Obtener los ConnectionIds almacenados en DynamoDB
@@ -66,7 +67,7 @@ def lambda_handler(event, context):
             # Enviar un mensaje a cada cliente WebSocket usando el API Gateway Management API
             ws_client.post_to_connection(
                 ConnectionId=connection_id,
-                Data=json.dumps(detail)
+                Data=json.dumps(item)
             )
     except Exception as e:
         err = f"Error procesando el evento: {str(e)}"
