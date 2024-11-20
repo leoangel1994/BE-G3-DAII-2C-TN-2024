@@ -37,12 +37,12 @@ provider:
 # Incluir solo estos archivos, necesario para reducir el tamano del zip
 package:
   patterns:
-    - '!**'
-    - 'api/rest.py'
-    - 'api/websocket.py'
-    - 'api/events.py'
-    - 'requirements.txt'
-    #- 'utils/save_url.py'
+    - "!**"
+    - "api/rest.py"
+    - "api/websocket.py"
+    - "api/events.py"
+    - "requirements.txt"
+    - "utils/save_url.py"
 
 functions:
   AllEvents:
@@ -87,6 +87,10 @@ functions:
     #      - 'api/rest.py'
     #      - 'requirements.txt'
     events:
+      - http:
+          path: /v1/health
+          method: get
+          cors: true
       - http:
           path: /v1/events/history
           method: get
@@ -306,7 +310,7 @@ resources:
           Fn::GetAtt: 
             - AllEventsEventBridgeRule
             - Arn
-    
+
     # Permite a otras cuentas de AWS (sandboxes) enviar eventos a este EDA
     EventBusPolicy:
       Type: AWS::Events::EventBusPolicy
@@ -327,7 +331,7 @@ resources:
           - AttributeName: connectionId
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
-    
+
     EventsHistoryTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -360,24 +364,24 @@ custom:
 
   customDomain:
     rest:
-      domainName: edaapi.deliver.ar
+      domainName: edaapi3.deliver.ar
       stage: dev
-      basePath: ''
-      certificateName: '*.deliver.ar'
+      basePath: ""
+      certificateName: "*.deliver.ar"
       createRoute53Record: false
       endpointType: REGIONAL
       securityPolicy: tls_1_2
       apiType: rest
 
     websocket:
-      domainName: edaws.deliver.ar
+      domainName: edaws3.deliver.ar
       stage: dev
-      basePath: ''
-      certificateName: '*.deliver.ar'
+      basePath: ""
+      certificateName: "*.deliver.ar"
       createRoute53Record: false
       endpointType: REGIONAL
       securityPolicy: tls_1_2
       apiType: websocket
 
-  #scriptHooks:
-    #after:deploy:finalize: 'aws lambda invoke --function-name eventify-eda-be-dev-saveWebsocketUrl --log-type Tail outfile.txt'
+  scriptHooks:
+    after:deploy:finalize: "aws lambda invoke --function-name eventify-eda-be-dev-saveWebsocketUrl --log-type Tail --profile aws-academy outfile.txt"
