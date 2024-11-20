@@ -4,3 +4,5 @@ cdk-test/
 outfile.txt
 test/__pycache__/*
 api/__pycache__/*
+examples/python/send_event_env_var.py
+examples/python/send_event_env_var.py

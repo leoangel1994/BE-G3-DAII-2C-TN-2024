@@ -22,14 +22,28 @@ app.add_middleware(
 )
 
 def get_dynamodb_table():
-    dynamodb = boto3.resource('dynamodb')
+    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
     return dynamodb.Table('EventsHistory')
+
+@app.get("/v1/health")
+def health_check():
+    """
+    Health check endpoint to verify if the service is running.
+    """
+    return JSONResponse(
+        content={"ok": True, "message": "Service is healthy"},
+        headers={
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*", 
+            "Access-Control-Allow-Headers": "*", 
+        }
+    )
 
 @app.get("/v1/events/history")
 def get_event_history(
     operation: Optional[str] = Query(None, description="Filtrar eventos por operación (ej: venta, reventa)"),
-    sort_by: Optional[str] = Query(None, description="Campo por el que ordenar los eventos (ej: timestamp)"),
-    sort_order: Optional[str] = Query("asc", description="Orden de los eventos (asc o desc)"),
+    sort_by: Optional[str] = Query(default="timestamp", description="Campo por el que ordenar los eventos (ej: timestamp)"),
+    sort_order: Optional[str] = Query(default="desc", description="Orden de los eventos (asc o desc)"),
     start_date: Optional[str] = Query(None, description="Fecha de inicio en formato YYYY-MM-DD"),
     end_date: Optional[str] = Query(None, description="Fecha de fin en formato YYYY-MM-DD")
 ):

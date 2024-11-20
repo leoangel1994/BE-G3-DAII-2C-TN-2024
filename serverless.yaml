@@ -8,7 +8,7 @@ provider:
   region: us-east-1
   profile: aws-academy
   stage: dev
-  role: arn:aws:iam::637423304975:role/LabRole
+  role: arn:aws:iam::442042507897:role/LabRole
   vpc:
     securityGroupIds:
       - Ref: PublicSecurityGroup
@@ -33,39 +33,48 @@ provider:
       Action:
         - events:PutEvents
       Resource:
-        - arn:aws:events:us-east-1:637423304975:event-bus/default
+        - arn:aws:events:us-east-1:442042507897:event-bus/default
 
 # Incluir solo estos archivos, necesario para reducir el tamano del zip
 package:
   patterns:
-    - '!**'
-    - 'api/rest.py'
-    - 'api/websocket.py'
-    - 'api/events.py'
-    - 'requirements.txt'
-    - 'utils/save_url.py'
+    - "!**"
+    - "api/rest.py"
+    - "api/websocket.py"
+    - "api/events.py"
+    - "requirements.txt"
+    - "utils/save_url.py"
 
 functions:
-  testHandler:
-    name: TestHandlerLambdaFunction 
+  AllEvents:
+    name: AllEventsLambdaFunction 
     handler: api.events.lambda_handler
     package:
       individually: true
 
-  websocketConnect:
+  WebsocketConnect:
+    name: WebsocketConnect 
     handler: api.websocket.connect
+    package:
+      individually: true
     events:
       - websocket:
           route: $connect
 
-  websocketDisconnect:
+  WebsocketDisconnect:
+    name: WebsocketDisconnect
     handler: api.websocket.disconnect
+    package:
+      individually: true
     events:
       - websocket:
           route: $disconnect
 
-  websocketDefault:
+  WebsocketDefault:
+    name: WebsocketDefault
     handler: api.websocket.default
+    package:
+      individually: true
     events:
       - websocket:
           route: $default
@@ -79,6 +88,10 @@ functions:
     #      - 'api/rest.py'
     #      - 'requirements.txt'
     events:
+      - http:
+          path: /v1/health
+          method: get
+          cors: true
       - http:
           path: /v1/events/history
           method: get
@@ -95,12 +108,16 @@ functions:
           path: /openapi.json
           method: get
           cors: true
+      - http:
+          path: /v1/health
+          method: get
+          cors: true
 
-  saveWebsocketUrl:
-    handler: utils.save_url.lambda_handler
-    package:
-      individually: true
-    timeout: 60
+  # saveWebsocketUrl:
+  #   handler: utils.save_url.lambda_handler
+  #   package:
+  #     individually: true
+  #   timeout: 60
 
 resources:
   Resources:
@@ -264,31 +281,37 @@ resources:
           - IpProtocol: -1
             CidrIp: 0.0.0.0/0
 
-    TestHandlerEventBridgeRule:
+    AllEventsEventBridgeRule:
       Type: AWS::Events::Rule
       Properties:
-        Name: testHandlerEventRule 
+        Name: AllEventsEventRule 
         EventBusName: default
         EventPattern:
-          source:
-            - myapp
+          source: 
+            - "*"
+            - "artist-module"
+            - "tickets-module"
+            - "blockchain-module"
+            - "wallet-module"
+            - "analytics-module"
+            - "ldap-module"
         Targets:
           - Arn:
-              Fn::GetAtt: [TestHandlerLambdaFunction, Arn]
-            Id: TestHandlerEventTarget 
+              Fn::GetAtt: [AllEventsLambdaFunction, Arn]
+            Id: AllEventsEventTarget 
 
-    TestHandlerLambdaPermission:
+    AllEventsLambdaPermission:
       Type: AWS::Lambda::Permission
       Properties:
         FunctionName: 
-          Ref: TestHandlerLambdaFunction
+          Ref: AllEventsLambdaFunction
         Action: lambda:InvokeFunction
         Principal: events.amazonaws.com
         SourceArn: 
           Fn::GetAtt: 
-            - TestHandlerEventBridgeRule
+            - AllEventsEventBridgeRule
             - Arn
-    
+
     # Permite a otras cuentas de AWS (sandboxes) enviar eventos a este EDA
     EventBusPolicy:
       Type: AWS::Events::EventBusPolicy
@@ -309,7 +332,7 @@ resources:
           - AttributeName: connectionId
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
-    
+
     EventsHistoryTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -342,24 +365,24 @@ custom:
 
   customDomain:
     rest:
-      domainName: edaapi.deliver.ar
+      domainName: edaapi3.deliver.ar
       stage: dev
-      basePath: ''
-      certificateName: '*.deliver.ar'
+      basePath: ""
+      certificateName: "*.deliver.ar"
       createRoute53Record: false
       endpointType: REGIONAL
       securityPolicy: tls_1_2
       apiType: rest
 
     websocket:
-      domainName: edaws.deliver.ar
+      domainName: edaws3.deliver.ar
       stage: dev
-      basePath: ''
-      certificateName: '*.deliver.ar'
+      basePath: ""
+      certificateName: "*.deliver.ar"
       createRoute53Record: false
       endpointType: REGIONAL
       securityPolicy: tls_1_2
       apiType: websocket
 
   scriptHooks:
-    after:deploy:finalize: 'aws lambda invoke --function-name eventify-eda-be-dev-saveWebsocketUrl --log-type Tail --profile aws-academy outfile.txt'
+    after:deploy:finalize: "aws lambda invoke --function-name eventify-eda-be-dev-saveWebsocketUrl --log-type Tail --profile aws-academy outfile.txt"
