@@ -6,6 +6,7 @@ provider:
   name: aws
   runtime: python3.10
   region: us-east-1
+  profile: aws-academy
   stage: dev
   role: arn:aws:iam::442042507897:role/LabRole
   vpc:
