@@ -6,9 +6,8 @@ provider:
   name: aws
   runtime: python3.10
   region: us-east-1
-  profile: aws-academy
   stage: dev
-  role: arn:aws:iam::442042507897:role/LabRole
+  role: arn:aws:iam::654654390511:role/LabRole
   vpc:
     securityGroupIds:
       - Ref: PublicSecurityGroup
@@ -31,19 +30,22 @@ provider:
         - arn:aws:dynamodb:us-east-1:*:table/EventsHistory
     - Effect: Allow
       Action:
-        - events:PutEvents
+        - sns:Publish
+        - sns:Subscribe
+        - sns:Receive
+        - sns:ListTopics
       Resource:
-        - arn:aws:events:us-east-1:442042507897:event-bus/default
-
+        - '*'
+           
 # Incluir solo estos archivos, necesario para reducir el tamano del zip
 package:
   patterns:
-    - "!**"
-    - "api/rest.py"
-    - "api/websocket.py"
-    - "api/events.py"
-    - "requirements.txt"
-    - "utils/save_url.py"
+    - '!**'
+    - 'api/rest.py'
+    - 'api/websocket.py'
+    - 'api/events.py'
+    - 'requirements.txt'
+    #- 'utils/save_url.py'
 
 functions:
   AllEvents:
@@ -89,15 +91,11 @@ functions:
     #      - 'requirements.txt'
     events:
       - http:
-          path: /v1/health
-          method: get
-          cors: true
-      - http:
           path: /v1/events/history
           method: get
           cors: true
       - http:
-          path: /v1/operations/types
+          path: /v1/detail-types
           method: get
           cors: true
       - http:
@@ -118,6 +116,30 @@ functions:
   #   package:
   #     individually: true
   #   timeout: 60
+
+  ArtistTopic:
+    name: ArtistTopicLambdaFunction
+    handler: api.events.artist_topic_handler
+    package:
+      individually: true
+
+  RecitalTopic:
+    name: RecitalTopicLambdaFunction
+    handler: api.events.recital_topic_handler
+    package:
+      individually: true
+
+  TicketTopic:
+    name: TicketTopicLambdaFunction
+    handler: api.events.ticket_topic_handler
+    package:
+      individually: true
+
+  WalletTopic:
+    name: WalletTopicLambdaFunction
+    handler: api.events.wallet_topic_handler
+    package:
+      individually: true
 
 resources:
   Resources:
@@ -280,6 +302,247 @@ resources:
         SecurityGroupEgress:
           - IpProtocol: -1
             CidrIp: 0.0.0.0/0
+  
+    
+    EventBusPolicy0:
+      Type: AWS::Events::EventBusPolicy
+      Properties:
+        StatementId: "AllowEventsFromOtherSandboxes0"
+        EventBusName: "default"
+        Action: "events:PutEvents"
+        Principal: "654654390511"
+
+    # Permite a otras cuentas de AWS (sandboxes) enviar eventos a este EDA
+    EventBusPolicy:
+      Type: AWS::Events::EventBusPolicy
+      Properties:
+        StatementId: "AllowEventsFromOtherSandboxes1"
+        EventBusName: "default"
+        Action: "events:PutEvents"
+        Principal: "747661705570"
+
+    EventBusPolicy2:
+      Type: AWS::Events::EventBusPolicy
+      Properties:
+        StatementId: "AllowEventsFromOtherSandboxes2"
+        EventBusName: "default"
+        Action: "events:PutEvents"
+        Principal: "637423304975"
+
+    EventBusPolicy3:
+      Type: AWS::Events::EventBusPolicy
+      Properties:
+        StatementId: "AllowEventsFromOtherSandboxes3"
+        EventBusName: "default"
+        Action: "events:PutEvents"
+        Principal: "842961581719"
+
+    EventBusPolicy4:
+      Type: AWS::Events::EventBusPolicy
+      Properties:
+        StatementId: "AllowEventsFromOtherSandboxes4"
+        EventBusName: "default"
+        Action: "events:PutEvents"
+        Principal: "314146339911"
+
+    EventBusPolicy5:
+      Type: AWS::Events::EventBusPolicy
+      Properties:
+        StatementId: "AllowEventsFromOtherSandboxes5"
+        EventBusName: "default"
+        Action: "events:PutEvents"
+        Principal: "185610718112"
+
+    EventBusPolicy6:
+      Type: AWS::Events::EventBusPolicy
+      Properties:
+        StatementId: "AllowEventsFromOtherSandboxes6"
+        EventBusName: "default"
+        Action: "events:PutEvents"
+        Principal: "996851032909"
+
+    EventBusPolicy7:
+      Type: AWS::Events::EventBusPolicy
+      Properties:
+        StatementId: "AllowEventsFromOtherSandboxes7"
+        EventBusName: "default"
+        Action: "events:PutEvents"
+        Principal: "201596100553"
+
+    EventBusPolicy8:
+      Type: AWS::Events::EventBusPolicy
+      Properties:
+        StatementId: "AllowEventsFromOtherSandboxes8"
+        EventBusName: "default"
+        Action: "events:PutEvents"
+        Principal: "416160473082"
+
+    EventBusPolicy9:
+      Type: AWS::Events::EventBusPolicy
+      Properties:
+        StatementId: "AllowEventsFromOtherSandboxes9"
+        EventBusName: "default"
+        Action: "events:PutEvents"
+        Principal: "865820275928"
+
+    EventBusPolicy10:
+      Type: AWS::Events::EventBusPolicy
+      Properties:
+        StatementId: "AllowEventsFromOtherSandboxes10"
+        EventBusName: "default"
+        Action: "events:PutEvents"
+        Principal: "654654390511"
+
+    EventBusPolicy11:
+      Type: AWS::Events::EventBusPolicy
+      Properties:
+        StatementId: "AllowEventsFromOtherSandboxes11"
+        EventBusName: "default"
+        Action: "events:PutEvents"
+        Principal: "495599758261"
+
+    EventBusPolicy12:
+      Type: AWS::Events::EventBusPolicy
+      Properties:
+        StatementId: "AllowEventsFromOtherSandboxes12"
+        EventBusName: "default"
+        Action: "events:PutEvents"
+        Principal: "381492170463"
+    
+    EventBusPolicy13:
+      Type: AWS::Events::EventBusPolicy
+      Properties:
+        StatementId: "AllowEventsFromOtherSandboxes13"
+        EventBusName: "default"
+        Action: "events:PutEvents"
+        Principal: "746162069331"
+
+    EventBusPolicy14:
+      Type: AWS::Events::EventBusPolicy
+      Properties:
+        StatementId: "AllowEventsFromOtherSandboxes14"
+        EventBusName: "default"
+        Action: "events:PutEvents"
+        Principal: "533267034688"
+
+    EventBusPolicy15:
+        Type: AWS::Events::EventBusPolicy
+        Properties:
+          StatementId: "AllowEventsFromOtherSandboxes15"
+          EventBusName: "default"
+          Action: "events:PutEvents"
+          Principal: "533267277817"
+
+    EventBusPolicy16:
+        Type: AWS::Events::EventBusPolicy
+        Properties:
+          StatementId: "AllowEventsFromOtherSandboxes16"
+          EventBusName: "default"
+          Action: "events:PutEvents"
+          Principal: "195739780677"
+
+    EventBusPolicy17:
+        Type: AWS::Events::EventBusPolicy
+        Properties:
+          StatementId: "AllowEventsFromOtherSandboxes17"
+          EventBusName: "default"
+          Action: "events:PutEvents"
+          Principal: "578340619573"
+    
+    EventBusPolicy18:
+        Type: AWS::Events::EventBusPolicy
+        Properties:
+          StatementId: "AllowEventsFromOtherSandboxes18"
+          EventBusName: "default"
+          Action: "events:PutEvents"
+          Principal: "536914812661"
+    
+    EventBusPolicy19:
+        Type: AWS::Events::EventBusPolicy
+        Properties:
+          StatementId: "AllowEventsFromOtherSandboxes19"
+          EventBusName: "default"
+          Action: "events:PutEvents"
+          Principal: "637423205166"
+
+    EventBusPolicy20:
+        Type: AWS::Events::EventBusPolicy
+        Properties:
+          StatementId: "AllowEventsFromOtherSandboxes20"
+          EventBusName: "default"
+          Action: "events:PutEvents"
+          Principal: "042934109592"
+
+    EventBusPolicy21:
+        Type: AWS::Events::EventBusPolicy
+        Properties:
+          StatementId: "AllowEventsFromOtherSandboxes21"
+          EventBusName: "default"
+          Action: "events:PutEvents"
+          Principal: "984713860769"
+
+    EventBusPolicy22:
+        Type: AWS::Events::EventBusPolicy
+        Properties:
+          StatementId: "AllowEventsFromOtherSandboxes22"
+          EventBusName: "default"
+          Action: "events:PutEvents"
+          Principal: "635632725827"
+
+    EventBusPolicy23:
+        Type: AWS::Events::EventBusPolicy
+        Properties:
+          StatementId: "AllowEventsFromOtherSandboxes23"
+          EventBusName: "default"
+          Action: "events:PutEvents"
+          Principal: "849528710182"
+
+    EventBusPolicy24:
+        Type: AWS::Events::EventBusPolicy
+        Properties:
+          StatementId: "AllowEventsFromOtherSandboxes24"
+          EventBusName: "default"
+          Action: "events:PutEvents"
+          Principal: "321719814614"
+
+    EventBusPolicy25:
+        Type: AWS::Events::EventBusPolicy
+        Properties:
+          StatementId: "AllowEventsFromOtherSandboxes25"
+          EventBusName: "default"
+          Action: "events:PutEvents"
+          Principal: "836662020520"
+
+    ConnectionsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ConnectionsTable
+        AttributeDefinitions:
+          - AttributeName: connectionId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: connectionId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    
+    EventsHistoryTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: EventsHistory
+        AttributeDefinitions:
+          - AttributeName: eventId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: eventId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    # ApiGatewayBasePathMapping:
+    #   Type: AWS::ApiGateway::BasePathMapping
+    #   Properties:
+    #     DomainName: deliver.ar
+    #     RestApiId:
+    #       Ref: ApiGatewayRestApi
 
     AllEventsEventBridgeRule:
       Type: AWS::Events::Rule
@@ -312,45 +575,325 @@ resources:
             - AllEventsEventBridgeRule
             - Arn
 
-    # Permite a otras cuentas de AWS (sandboxes) enviar eventos a este EDA
-    EventBusPolicy:
-      Type: AWS::Events::EventBusPolicy
+    ArtistTopic:
+      Type: AWS::SNS::Topic
       Properties:
-        StatementId: "AllowEventsFromOtherSandboxes"
-        EventBusName: "default"
-        Action: "events:PutEvents"
-        Principal: "747661705570"
+        TopicName: artist-topic
 
-    ConnectionsTable:
-      Type: AWS::DynamoDB::Table
+    ArtistTopicPolicy:
+      Type: AWS::SNS::TopicPolicy
       Properties:
-        TableName: ConnectionsTable
-        AttributeDefinitions:
-          - AttributeName: connectionId
-            AttributeType: S
-        KeySchema:
-          - AttributeName: connectionId
-            KeyType: HASH
-        BillingMode: PAY_PER_REQUEST
+        Topics:
+          - Ref: ArtistTopic
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal: "*"
+              Action:
+                - "sns:Subscribe"
+              Resource: 
+                - !Ref ArtistTopic
+              Condition:
+                StringEquals:
+                  aws:PrincipalAccount:
+                    - "747661705570"
+                    - "637423304975"
+                    - "842961581719"
+                    - "314146339911"
+                    - "185610718112"
+                    - "996851032909"
+                    - "201596100553"
+                    - "416160473082"
+                    - "865820275928"
+                    - "654654390511"
+                    - "495599758261"
+                    - "381492170463"
+                    - "746162069331"
+                    - "533267034688"
+                    - "533267277817"
+                    - "195739780677"
+                    - "578340619573"
+                    - "536914812661"
+                    - "637423205166"
+                    - "042934109592"
+                    - "984713860769"
+                    - "635632725827"
+                    - "849528710182"
+                    - "321719814614"
+                    - "836662020520"
 
-    EventsHistoryTable:
-      Type: AWS::DynamoDB::Table
+    ArtistTopicEventBridgeRule:
+      Type: AWS::Events::Rule
       Properties:
-        TableName: EventsHistory
-        AttributeDefinitions:
-          - AttributeName: eventId
-            AttributeType: S
-        KeySchema:
-          - AttributeName: eventId
-            KeyType: HASH
-        BillingMode: PAY_PER_REQUEST
+        Name: ArtistTopicEventBridgeRule
+        EventPattern:
+          source:
+            - artist-module
+            - ldap-module
+            - wallet-module
+            - tickets-module
+          detail-type:
+            - artist.profile.created
+            - artist.registration
+        Targets:
+          - Arn:
+              Fn::GetAtt: [ArtistTopicLambdaFunction, Arn]
+            Id: TargetFunction
 
-    # ApiGatewayBasePathMapping:
-    #   Type: AWS::ApiGateway::BasePathMapping
-    #   Properties:
-    #     DomainName: deliver.ar
-    #     RestApiId:
-    #       Ref: ApiGatewayRestApi
+    ArtistTopicLambdaPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: 
+          Ref: ArtistTopicLambdaFunction
+        Action: lambda:InvokeFunction
+        Principal: events.amazonaws.com
+        SourceArn: 
+          Fn::GetAtt: 
+            - ArtistTopicEventBridgeRule
+            - Arn
+
+    RecitalTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: recital-topic
+
+    RecitalTopicPolicy:
+      Type: AWS::SNS::TopicPolicy
+      Properties:
+        Topics:
+          - Ref: RecitalTopic
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal: "*"
+              Action:
+                - "sns:Subscribe"
+              Resource: 
+                - !Ref RecitalTopic
+              Condition:
+                StringEquals:
+                  aws:PrincipalAccount:
+                    - "747661705570"
+                    - "637423304975"
+                    - "842961581719"
+                    - "314146339911"
+                    - "185610718112"
+                    - "996851032909"
+                    - "201596100553"
+                    - "416160473082"
+                    - "865820275928"
+                    - "654654390511"
+                    - "495599758261"
+                    - "381492170463"
+                    - "746162069331"
+                    - "533267034688"
+                    - "533267277817"
+                    - "195739780677"
+                    - "578340619573"
+                    - "536914812661"
+                    - "637423205166"
+                    - "042934109592"
+                    - "984713860769"
+                    - "635632725827"
+                    - "849528710182"
+                    - "321719814614"
+                    - "836662020520"
+
+    RecitalTopicEventBridgeRule:
+      Type: AWS::Events::Rule
+      Properties:
+        Name: RecitalTopicEventBridgeRule
+        EventPattern:
+          source:
+            - artist-module
+            - tickets-module
+            - wallet-module
+          detail-type:
+            - recital.created
+            - recital.updated
+            - recital.deleted
+        Targets:
+          - Arn:
+              Fn::GetAtt: [RecitalTopicLambdaFunction, Arn]
+            Id: TargetFunction
+
+    RecitalTopicLambdaPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: 
+          Ref: RecitalTopicLambdaFunction
+        Action: lambda:InvokeFunction
+        Principal: events.amazonaws.com
+        SourceArn: 
+          Fn::GetAtt: 
+            - RecitalTopicEventBridgeRule
+            - Arn
+    
+    TicketTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ticket-topic
+
+    TicketTopicPolicy:
+      Type: AWS::SNS::TopicPolicy
+      Properties:
+        Topics:
+          - Ref: TicketTopic
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal: "*"
+              Action:
+                - "sns:Subscribe"
+              Resource: 
+                - !Ref TicketTopic
+              Condition:
+                StringEquals:
+                  aws:PrincipalAccount:
+                    - "747661705570"
+                    - "637423304975"
+                    - "842961581719"
+                    - "314146339911"
+                    - "185610718112"
+                    - "996851032909"
+                    - "201596100553"
+                    - "416160473082"
+                    - "865820275928"
+                    - "654654390511"
+                    - "495599758261"
+                    - "381492170463"
+                    - "746162069331"
+                    - "533267034688"
+                    - "533267277817"
+                    - "195739780677"
+                    - "578340619573"
+                    - "536914812661"
+                    - "637423205166"
+                    - "042934109592"
+                    - "984713860769"
+                    - "635632725827"
+                    - "849528710182"
+                    - "321719814614"
+                    - "836662020520"
+
+    TicketTopicEventBridgeRule:
+      Type: AWS::Events::Rule
+      Properties:
+        Name: TicketTopicEventBridgeRule
+        EventPattern:
+          source:
+            - artist-module
+            - tickets-module
+            - wallet-module
+            - blockchain-module
+          detail-type:
+            - ticket.purchase
+            - ticket.repurchase
+            - ticket.reimburse
+        Targets:
+          - Arn:
+              Fn::GetAtt: [TicketTopicLambdaFunction, Arn]
+            Id: TargetFunction
+
+    TicketTopicLambdaPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: 
+          Ref: TicketTopicLambdaFunction
+        Action: lambda:InvokeFunction
+        Principal: events.amazonaws.com
+        SourceArn: 
+          Fn::GetAtt: 
+            - TicketTopicEventBridgeRule
+            - Arn
+    
+    WalletTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: wallet-topic
+
+    WalletPolicy:
+      Type: AWS::SNS::TopicPolicy
+      Properties:
+        Topics:
+          - Ref: WalletTopic
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal: "*"
+              Action:
+                - "sns:Subscribe"
+              Resource: 
+                - !Ref WalletTopic
+              Condition:
+                StringEquals:
+                  aws:PrincipalAccount:
+                    - "747661705570"
+                    - "637423304975"
+                    - "842961581719"
+                    - "314146339911"
+                    - "185610718112"
+                    - "996851032909"
+                    - "201596100553"
+                    - "416160473082"
+                    - "865820275928"
+                    - "654654390511"
+                    - "495599758261"
+                    - "381492170463"
+                    - "746162069331"
+                    - "533267034688"
+                    - "533267277817"
+                    - "195739780677"
+                    - "578340619573"
+                    - "536914812661"
+                    - "637423205166"
+                    - "042934109592"
+                    - "984713860769"
+                    - "635632725827"
+                    - "849528710182"
+                    - "321719814614"
+                    - "836662020520"
+
+    WalletTopicEventBridgeRule:
+      Type: AWS::Events::Rule
+      Properties:
+        Name: WalletTopicEventBridgeRule
+        EventPattern:
+          source:
+            - artist-module
+            - wallet-module
+            - blockchain-module
+            - tickets-module
+          detail-type:
+            - wallet.balance
+            - wallet.promotions
+            - wallet.payment.crypto
+            - wallet.payment.pesos
+            - wallet.transfer.ticket
+            - wallet.transfer.crypto
+            - wallet.payment.salary
+            - wallet.repurchase.paid
+
+        Targets:
+          - Arn:
+              Fn::GetAtt: [WalletTopicLambdaFunction, Arn]
+            Id: TargetFunction
+
+    WalletTopicLambdaPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: 
+          Ref: WalletTopicLambdaFunction
+        Action: lambda:InvokeFunction
+        Principal: events.amazonaws.com
+        SourceArn: 
+          Fn::GetAtt: 
+            - WalletTopicEventBridgeRule
+            - Arn
 
 plugins:
   - serverless-python-requirements
@@ -365,24 +908,24 @@ custom:
 
   customDomain:
     rest:
-      domainName: edaapi3.deliver.ar
+      domainName: edaapi8.deliver.ar
       stage: dev
-      basePath: ""
-      certificateName: "*.deliver.ar"
+      basePath: ''
+      certificateName: '*.deliver.ar'
       createRoute53Record: false
       endpointType: REGIONAL
       securityPolicy: tls_1_2
       apiType: rest
 
     websocket:
-      domainName: edaws3.deliver.ar
+      domainName: edaws8.deliver.ar
       stage: dev
-      basePath: ""
-      certificateName: "*.deliver.ar"
+      basePath: ''
+      certificateName: '*.deliver.ar'
       createRoute53Record: false
       endpointType: REGIONAL
       securityPolicy: tls_1_2
       apiType: websocket
 
-  scriptHooks:
-    after:deploy:finalize: "aws lambda invoke --function-name eventify-eda-be-dev-saveWebsocketUrl --log-type Tail --profile aws-academy outfile.txt"
+  #scriptHooks:
+    #after:deploy:finalize: 'aws lambda invoke --function-name eventify-eda-be-dev-saveWebsocketUrl --log-type Tail outfile.txt'

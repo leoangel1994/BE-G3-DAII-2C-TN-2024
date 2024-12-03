@@ -22,7 +22,7 @@ public class EventBridgeExample {
 
         // Opción 2: Usar credenciales en variables de entorno
         
-        AwsBasicCredentials awsCreds = AwsBasicCredentials.create("TU_ACCESS_KEY_ID", "TU_SECRET_ACCESS_KEY");
+        AwsBasicCredentials awsCreds = AwsBasicCredentials.create("TU_ACCESS_KEY_ID", "TU_SECRET_ACCESS_KEY", "TU_SESSION_TOKEN");
         EventBridgeClient client = EventBridgeClient.builder()
                 .region(Region.US_EAST_1)
                 .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
@@ -34,9 +34,9 @@ public class EventBridgeExample {
     }
 
     private static void sendTestEvent(EventBridgeClient client) {
+        // en el campo detail peude ir cualquier cosa
         String detail = """
                 {
-                    "operation": "creacion",
                     "artista": "Monolink",
                     "lugar": "Platea A",
                     "estadio": "Monumental",
@@ -45,12 +45,11 @@ public class EventBridgeExample {
                     "fecha_actualizacion": "2024-09-29"
                 }
                 """;
-                // EL CAMPO OPERATION ES OBLIGATORIO
 
         PutEventsRequestEntry entry = PutEventsRequestEntry.builder()
-                .eventBusName("arn:aws:events:us-east-1:654654390511:event-bus/default")
-                .source("artist-module") // obligatorio
-                .detailType("recital")  // obligatorio
+                .eventBusName("arn:aws:events:us-east-1:654654390511:event-bus/default")  // no tocar
+                .source("artist-module") // obligatorio, el valor es un ejemplo
+                .detailType("recital")  // obligatorio  el valor es un ejemplo
                 .detail(detail)
                 .build();
 

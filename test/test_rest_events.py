@@ -30,21 +30,50 @@ def setup_dynamodb():
         yield dynamodb
 
         table.delete()
-        
+
 from fastapi.testclient import TestClient
 from api.rest import app
 
 client = TestClient(app)
 
-def test_get_operation_types():
-        response = client.get("/v1/operations/types")
-        assert response.status_code == 200
-        # TODO pendiente de PO
-        assert response.json() == {
-            "ok": True,
-            "message": "success",
-            "data": {"operationTypes": ["venta", "reventa"]}
+
+def test_get_detail_types():
+    response = client.get("/v1/detail-types")
+    assert response.status_code == 200
+    # TODO pendiente de PO
+    assert response.json() == {
+        "ok": True,
+        "message": "success",
+        "data": {
+            "detailTypes": [
+                "artist.registration",
+                "artist.profile.created",
+                "recital.created",
+                "recital.updated",
+                "recital.deleted",
+                "ticket.purchase", 
+                "ticket.repurchase",
+                "ticket.reimburse",
+                "wallet.balance",
+                "wallet.promotions",
+                "wallet.payment.crypto",
+                "wallet.payment.pesos",
+                "wallet.transfer.ticket",
+                "wallet.transfer.crypto",
+                "wallet.payment.salary",
+                "wallet.repurchase.paid"
+            ],
+            "sources": [
+                "artist-module",
+                "wallet-module",
+                "tickets-module",
+                "analytics-module",
+                "blockchain-module",
+                "ldap-module"
+            ]
+        },
     }
+
 
 def test_get_event_history_no_params(setup_dynamodb):
     with patch("api.rest.get_dynamodb_table") as mock_dynamodb_table:
@@ -64,8 +93,8 @@ def test_when_events_table_empty_len_zero_then_send_event_then_len_one(setup_dyn
 
         new_event = {
             "eventId": "1",
-            "operation": "venta",
-            "timestamp": "2024-10-14T12:34:56"
+            "detail-type": "artist.registration",
+            "timestamp": "2024-11-17T15:00:00-03:00"
         }
         table = setup_dynamodb.Table('EventsHistory')
         table.put_item(Item=new_event)
@@ -77,4 +106,4 @@ def test_when_events_table_empty_len_zero_then_send_event_then_len_one(setup_dyn
         # Verificar el contenido del evento
         event = response.json()["data"]["events"][0]
         assert event["eventId"] == "1"
-        assert event["operation"] == "venta"
+        assert event["detail-type"] == "artist.registration"

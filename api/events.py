@@ -3,12 +3,17 @@ import boto3
 from datetime import datetime
 import uuid
 
+from datetime import datetime, timezone, timedelta
+
+
+
 ssm = boto3.client('ssm')
 
-#def get_websocket_url():
+# def get_websocket_url():
 #    response = ssm.get_parameter(Name='/eventify-eda-be/websocket-url', WithDecryption=True)
 #    return response['Parameter']['Value']
 
+sns_client = boto3.client('sns', region_name='us-east-1')
 dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 table = dynamodb.Table('ConnectionsTable')
 history_table = dynamodb.Table('EventsHistory')
@@ -24,7 +29,7 @@ def lambda_handler(event, context):
     #url_https = websocket_url.replace("wss://", "https://")
 
     ws_client = boto3.client('apigatewaymanagementapi',
-            endpoint_url="https://edaws.deliver.ar/"#url_https
+            endpoint_url="https://edaws8.deliver.ar/"#url_https
         )
 
     try:
@@ -32,12 +37,7 @@ def lambda_handler(event, context):
             raise KeyError("no se recibio detail en el evento")
         
         detail = event['detail']
-        
-        if 'operation' not in detail:
-            raise KeyError("no se recibio operation en el evento")
-        
-        operation = detail.get('operation', 'unknown')
-        
+
         if 'source' not in event:
             raise KeyError("no se recibio source en el evento")
         
@@ -52,8 +52,7 @@ def lambda_handler(event, context):
         event_id = str(uuid.uuid4())
         item = {
                 'eventId': event_id,
-                'timestamp': datetime.utcnow().isoformat(),
-                'operation': operation,
+                'timestamp': (datetime.utcnow() - timedelta(hours=3)).isoformat(),
                 'source': source,
                 'detail-type': detail_type,
                 'detail': detail
@@ -71,10 +70,18 @@ def lambda_handler(event, context):
             print(f"Connection ID: {connection_id}")
             
             # Enviar un mensaje a cada cliente WebSocket usando el API Gateway Management API
-            ws_client.post_to_connection(
-                ConnectionId=connection_id,
-                Data=json.dumps(item)
-            )
+            try: 
+                ws_client.post_to_connection(
+                    ConnectionId=connection_id,
+                    Data=json.dumps(item)
+                )
+            except ws_client.exceptions.GoneException:
+                print(f"Connection ID {connection_id} no es valida. Eliminando...")
+                table.delete_item(
+                    Key={'connectionId': connection_id}
+                )
+            except Exception as e:
+                print(f"Error enviando mensaje a {connection_id}: {str(e)}")
     except Exception as e:
         err = f"Error procesando el evento: {str(e)}"
         print(err)
@@ -87,3 +94,141 @@ def lambda_handler(event, context):
         'statusCode': 200,
         'body': json.dumps('Evento processado satisfactoriamente.')
     }
+
+
+def artist_topic_handler(event, context):
+    try:
+        print(f"Evento recibido: {json.dumps(event)}")
+        detail = event.get('detail', {})
+
+        artist_topic_arn = "arn:aws:sns:us-east-1:654654390511:artist-topic"
+
+        subject = detail.get('subject', 'Operación de Artista')
+
+        response = sns_client.publish(
+            TopicArn=artist_topic_arn,
+            Message=json.dumps(
+                {
+                    "source": event["source"],
+                    "detail-type": event["detail-type"],
+                    "detail": detail,
+                }
+            ),
+            Subject=subject,
+        )
+
+        print(f"Mensaje enviado a SNS: {response}")
+        return {
+            'statusCode': 200,
+            'body': json.dumps('Mensaje enviado!')
+        }
+
+    except Exception as e:
+        print(f"Error enviando mensaje a SNS: {e}")
+        return {
+            'statusCode': 500,
+            'body': json.dumps('Error procesnado evento.')
+        }
+
+def recital_topic_handler(event, context):
+    try:
+        print(f"Evento recibido: {json.dumps(event)}")
+        detail = event.get('detail', {})
+
+        recital_topic_arn = "arn:aws:sns:us-east-1:654654390511:recital-topic"
+        
+        subject = detail.get('subject', 'Operación de Recital')
+
+        response = sns_client.publish(
+            TopicArn=recital_topic_arn,
+            Message=json.dumps(
+                {
+                    "source": event["source"],
+                    "detail-type": event["detail-type"],
+                    "detail": detail,
+                }
+            ),
+            Subject=subject
+        )
+
+        print(f"Mensaje enviado a SNS: {response}")
+        return {
+            'statusCode': 200,
+            'body': json.dumps('Mensaje enviado!')
+        }
+
+    except Exception as e:
+        print(f"Error enviando mensaje a SNS: {e}")
+        return {
+            'statusCode': 500,
+            'body': json.dumps('Error procesnado evento.')
+        }
+
+
+def ticket_topic_handler(event, context):
+    try:
+        print(f"Evento recibido: {json.dumps(event)}")
+        detail = event.get('detail', {})
+
+        ticket_topic_arn = "arn:aws:sns:us-east-1:654654390511:ticket-topic"
+        
+        subject = detail.get('subject', 'Operación de Ticket')
+
+        response = sns_client.publish(
+            TopicArn=ticket_topic_arn,
+            Message=json.dumps(
+                {
+                    "source": event["source"],
+                    "detail-type": event["detail-type"],
+                    "detail": detail,
+                }
+            ),
+            Subject=subject
+        )
+
+        print(f"Mensaje enviado a SNS: {response}")
+        return {
+            'statusCode': 200,
+            'body': json.dumps('Mensaje enviado!')
+        }
+
+    except Exception as e:
+        print(f"Error enviando mensaje a SNS: {e}")
+        return {
+            'statusCode': 500,
+            'body': json.dumps('Error procesnado evento.')
+        }
+
+def wallet_topic_handler(event, context):
+    try:
+        print(f"Evento recibido: {json.dumps(event)}")
+        detail = event.get('detail', {})
+
+        ticket_topic_arn = "arn:aws:sns:us-east-1:654654390511:wallet-topic"
+        
+        subject = detail.get('subject', 'Operación de Wallet')
+
+        response = sns_client.publish(
+            TopicArn=ticket_topic_arn,
+            Message=json.dumps(
+                {
+                    "source": event["source"],
+                    "detail-type": event["detail-type"],
+                    "detail": detail,
+                }
+            ),
+            Subject=subject
+        )
+
+        print(f"Mensaje enviado a SNS: {response}")
+        return {
+            'statusCode': 200,
+            'body': json.dumps('Mensaje enviado!')
+        }
+
+    except Exception as e:
+        print(f"Error enviando mensaje a SNS: {e}")
+        return {
+            'statusCode': 500,
+            'body': json.dumps('Error procesnado evento.')
+        }
